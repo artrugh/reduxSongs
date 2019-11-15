@@ -98,3 +98,6 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps        
     )(SongList);
+# reduxSongs
+React-Redux SongDisplayer
+
