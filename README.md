@@ -1,68 +1,100 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React-Redux Basic
 
-## Available Scripts
+Simple example using Redux in React.
 
-In the project directory, you can run:
+instead of setting the state as usual, we use a library names REDUX
+in this case REACT-REDUX
 
-### `npm start`
+It allows us to set the state in functions (class object are not more needed).
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+For that we need basically 3 elements:
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+1.ACTIONS
+2.REDUCERS
+3.STORAGE
 
-### `npm test`
+1.REDUCERS are actions.
+Let's say that it is a order, DO THAT PLEASE!
+So plain functions with, comonly, an single argument and return an object with two values (type: x, payload: z).
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+example:
 
-### `npm run build`
+const selectSong = (song) => {
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    return {
+        type: "SONG_SELECTED",
+        payload: song,
+    };
+    
+};
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+2.REDUCERS are the guys who take the orders, let's think of a call center. They are in between the actions and the store. And they care about the type of order. they simply as the action guys: What do you want? What kind of order do you have?
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+So, tecnically they are also plain functions with two argument:
+1- an initial state
+2- an action
 
-### `npm run eject`
+they return the payload from the action (the song) or the initial state(null).
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+example:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+const selectedSongReducer = (selectedSong = null, action) => {
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+    if(action.type === 'SONG_SELECTED') {
+        return action.payload;
+    }
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+    return selectedSong;
+};
 
-## Learn More
+we can also combine easily reducers, setting them in an object.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+xport default combineReducers({
+    songs: songsReducer,
+    selectedSong: selectedSongReducer,
+})
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+*there are more complex reducers, what let's keep it simple for now.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+3.STOREGE.
+Is the brain and the last part of the chain.
+It is usually set it in the app, like this.
 
-### Analyzing the Bundle Size
+-remember to import:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+createStore from redux
+reducer from reducer
+provider from react-redux  
 
-### Making a Progressive Web App
+const store = createStore(reducer)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+render(
+    <Provider store={store}>
+        <App />
+    </Provider>)
 
-### Advanced Configuration
+/-------------------/-------------------/-------------------/-------------------/
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+* Last but not least
 
-### Deployment
+In react when we use the actions and the state from the reducers as props, we need to set them. How? let's see.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
 
-### `npm run build` fails to minify
+setting the props from the state/reducer
+const mapStateToProps = state => {
+    return { song: state.songs };
+    // setting the song
+    //props in the component got it from state songs (take a look at the reducer)
+};
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+// setting the props from the imported action
+const mapDispatchToProps = {
+    selectSongs: selectSong
+};
+
+//connecting the actions and reducers to the component
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps        
+    )(SongList);
